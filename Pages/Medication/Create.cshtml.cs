@@ -1,0 +1,45 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using PharmacyStorage.Data;
+using PharmacyStorage.Models;
+
+namespace PharmacyStorage.Pages.Medications
+{
+    public class CreateModel : PageModel
+    {
+        private readonly PharmacyStorage.Data.PharmacyStorageContext _context;
+
+        public CreateModel(PharmacyStorage.Data.PharmacyStorageContext context)
+        {
+            _context = context;
+        }
+
+        public IActionResult OnGet()
+        {
+            ViewData["ProviderID"] = new SelectList(_context.Set<Provider>(), "ID", "Name");
+            return Page();
+        }
+
+        [BindProperty]
+        public Medicine Medicine { get; set; }
+
+        // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
+        public async Task<IActionResult> OnPostAsync()
+        {
+            if (!ModelState.IsValid)
+            {
+                return Page();
+            }
+
+            _context.Medicine.Add(Medicine);
+            await _context.SaveChangesAsync();
+
+            return RedirectToPage("./Index");
+        }
+    }
+}
